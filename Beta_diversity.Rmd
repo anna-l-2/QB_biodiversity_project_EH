@@ -1,0 +1,150 @@
+---
+title: "Beta diversity"
+author: "Anna Lennon"
+date: "2025-02-28"
+output: html_document
+---
+
+```{r}
+ninvasive.AM.ss.L <-ninvasive.AM.ss[,-1]
+# ninvasive.ECM.ss
+# invasive.AM.ss
+# invasive.ECM.ss
+# tree.species.ss
+
+NI.AM.J <-vegdist(ninvasive.AM.ss.L, method = "jaccard", binary =TRUE)
+NI.AM.pcoa <-cmdscale(NI.AM.J, eig =TRUE, k =3)
+explainvar1 <- round(NI.AM.pcoa$eig[1] / sum(NI.AM.pcoa$eig), 3) * 100
+explainvar2 <- round(NI.AM.pcoa$eig[2] / sum(NI.AM.pcoa$eig), 3) * 100
+explainvar3 <- round(NI.AM.pcoa$eig[3] / sum(NI.AM.pcoa$eig), 3) * 100
+sum.eig <- sum(explainvar1, explainvar2, explainvar3)
+#Plot
+par(mar = c(5, 5, 1, 2) + 0.1)
+plot(NI.AM.pcoa$points[ ,1], NI.AM.pcoa$points[ ,2], ylim = c(-0.2, 0.7),
+     xlab = paste("PCoA 1 (", explainvar1, "%)", sep = ""),
+     ylab = paste("PCoA 2 (", explainvar2, "%)", sep = ""),
+     pch = 16, cex = 2.0, type = "n", cex.lab = 1.5, cex.axis = 1.2, axes = FALSE)
+
+axis(side = 1, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+axis(side = 2, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+abline(h = 0, v = 0, lty = 3)
+box(lwd = 2)
+
+points(NI.AM.pcoa$points[ ,1], NI.AM.pcoa$points[ ,2],
+       pch = 19, cex = 1, bg = "gray", col = "azure3")
+text(jitter(NI.AM.pcoa$points[,1], amount = 0.02), 
+     jitter(NI.AM.pcoa$points[,2], amount = 0.02), 
+     labels = row.names(NI.AM.pcoa$points), col = "black")
+title("Ordination of Non-invasive AM Species")
+
+```
+
+
+```{r}
+#ninvasive.AM.ss.L <-ninvasive.AM.ss[,-1]
+#ninvasive.ECM.ss.L <-ninvasive.AM.ss[,-1]
+# invasive.AM.ss
+# invasive.ECM.ss
+# tree.species.ss
+
+NI.ECM.J <- vegdist(ninvasive.ECM.ss.L, method = "jaccard", binary = TRUE)
+NI.ECM.pcoa <- cmdscale(NI.ECM.J, eig = TRUE, k = 3)
+
+explainvar1 <- round(NI.ECM.pcoa$eig[1] / sum(NI.ECM.pcoa$eig), 3) * 100
+explainvar2 <- round(NI.ECM.pcoa$eig[2] / sum(NI.ECM.pcoa$eig), 3) * 100
+explainvar3 <- round(NI.ECM.pcoa$eig[3] / sum(NI.ECM.pcoa$eig), 3) * 100
+sum.eig <- sum(explainvar1, explainvar2, explainvar3)
+
+# Plot
+par(mar = c(5, 5, 1, 2) + 0.1)
+plot(NI.ECM.pcoa$points[,1], NI.ECM.pcoa$points[,2], ylim = c(-0.2, 0.7),
+     xlab = paste("PCoA 1 (", explainvar1, "%)", sep = ""),
+     ylab = paste("PCoA 2 (", explainvar2, "%)", sep = ""),
+     pch = 16, cex = 2.0, type = "n", cex.lab = 1.5, cex.axis = 1.2, axes = FALSE)
+
+axis(side = 1, labels = TRUE, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+axis(side = 2, labels = TRUE, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+abline(h = 0, v = 0, lty = 3)
+box(lwd = 2)
+points(NI.ECM.pcoa$points[,1], NI.ECM.pcoa$points[,2],
+       pch = 19, cex = 1, bg = "gray", col = "azure3")
+text(jitter(NI.ECM.pcoa$points[,1], amount = 0.02), 
+     jitter(NI.ECM.pcoa$points[,2], amount = 0.02), 
+     labels = row.names(NI.ECM.pcoa$points), col = "black")
+title("Ordination of Non-invasive ECM Species")
+```
+
+
+```{r}
+#ninvasive.AM.ss.L <-ninvasive.AM.ss[,-1]
+#ninvasive.ECM.ss.L <-ninvasive.AM.ss[,-1]
+invasive.AM.ss.L <-invasive.AM.ss[,-1]
+# invasive.ECM.ss
+# tree.species.ss
+
+I.AM.J <- vegdist(invasive.AM.ss.L, method = "jaccard", binary = TRUE)
+I.AM.pcoa <- cmdscale(I.AM.J, eig = TRUE, k = 3)
+
+explainvar1 <- round(I.AM.pcoa$eig[1] / sum(I.AM.pcoa$eig), 3) * 100
+explainvar2 <- round(I.AM.pcoa$eig[2] / sum(I.AM.pcoa$eig), 3) * 100
+explainvar3 <- round(I.AM.pcoa$eig[3] / sum(I.AM.pcoa$eig), 3) * 100
+sum.eig <- sum(explainvar1, explainvar2, explainvar3)
+
+par(mar = c(5, 5, 1, 2) + 0.1)
+plot(I.AM.pcoa$points[,1], I.AM.pcoa$points[,2], ylim = c(-0.2, 0.7),
+     xlab = paste("PCoA 1 (", explainvar1, "%)", sep = ""),
+     ylab = paste("PCoA 2 (", explainvar2, "%)", sep = ""),
+     pch = 16, cex = 2.0, type = "n", cex.lab = 1.5, cex.axis = 1.2, axes = FALSE)
+
+axis(side = 1, labels = TRUE, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+axis(side = 2, labels = TRUE, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+abline(h = 0, v = 0, lty = 3)
+box(lwd = 2)
+
+points(I.AM.pcoa$points[,1], I.AM.pcoa$points[,2],
+       pch = 19, cex = 1, bg = "gray", col = "azure3")
+
+text(jitter(I.AM.pcoa$points[,1], amount = 0.02), 
+     jitter(I.AM.pcoa$points[,2], amount = 0.02), 
+     labels = row.names(I.AM.pcoa$points), col = "black")
+
+title("Ordination of Invasive AM Species")
+
+```
+
+```{r}
+#ninvasive.AM.ss.L <-ninvasive.AM.ss[,-1]
+#ninvasive.ECM.ss.L <-ninvasive.AM.ss[,-1]
+#invasive.AM.ss.L <-invasive.AM.ss[,-1]
+ invasive.ECM.ss <-invasive.ECM.ss[,-1]
+# tree.species.ss
+
+I.ECM.J <- vegdist(invasive.ECM.ss, method = "jaccard", binary = TRUE)
+I.ECM.pcoa <- cmdscale(I.ECM.J, eig = TRUE, k = 3)
+
+explainvar1 <- round(I.ECM.pcoa$eig[1] / sum(I.ECM.pcoa$eig), 3) * 100
+explainvar2 <- round(I.ECM.pcoa$eig[2] / sum(I.ECM.pcoa$eig), 3) * 100
+explainvar3 <- round(I.ECM.pcoa$eig[3] / sum(I.ECM.pcoa$eig), 3) * 100
+sum.eig <- sum(explainvar1, explainvar2, explainvar3)
+
+par(mar = c(5, 5, 1, 2) + 0.1)
+plot(I.ECM.pcoa$points[,1], I.ECM.pcoa$points[,2], ylim = c(-0.2, 0.7),
+     xlab = paste("PCoA 1 (", explainvar1, "%)", sep = ""),
+     ylab = paste("PCoA 2 (", explainvar2, "%)", sep = ""),
+     pch = 16, cex = 2.0, type = "n", cex.lab = 1.5, cex.axis = 1.2, axes = FALSE)
+
+axis(side = 1, labels = TRUE, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+axis(side = 2, labels = TRUE, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+abline(h = 0, v = 0, lty = 3)
+box(lwd = 2)
+
+points(I.ECM.pcoa$points[,1], I.ECM.pcoa$points[,2],
+       pch = 19, cex = 1, bg = "gray", col = "azure3")
+
+text(jitter(I.ECM.pcoa$points[,1], amount = 0.02), 
+     jitter(I.ECM.pcoa$points[,2], amount = 0.02), 
+     labels = row.names(I.ECM.pcoa$points), col = "black")
+
+title("Ordination of Invasive ECM Species")
+```
+
