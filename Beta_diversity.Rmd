@@ -6,13 +6,12 @@ output: html_document
 ---
 
 ```{r}
-ninvasive.AM.ss.L <-ninvasive.AM.ss[,-1]
 # ninvasive.ECM.ss
 # invasive.AM.ss
 # invasive.ECM.ss
 # tree.species.ss
 
-NI.AM.J <-vegdist(ninvasive.AM.ss.L, method = "jaccard", binary =TRUE)
+NI.AM.J <-vegdist(ninvasive.AM.ss, method = "jaccard", binary =TRUE)
 NI.AM.pcoa <-cmdscale(NI.AM.J, eig =TRUE, k =3)
 explainvar1 <- round(NI.AM.pcoa$eig[1] / sum(NI.AM.pcoa$eig), 3) * 100
 explainvar2 <- round(NI.AM.pcoa$eig[2] / sum(NI.AM.pcoa$eig), 3) * 100
@@ -32,9 +31,9 @@ box(lwd = 2)
 
 points(NI.AM.pcoa$points[ ,1], NI.AM.pcoa$points[ ,2],
        pch = 19, cex = 1, bg = "gray", col = "azure3")
-text(jitter(NI.AM.pcoa$points[,1], amount = 0.02), 
-     jitter(NI.AM.pcoa$points[,2], amount = 0.02), 
-     labels = row.names(NI.AM.pcoa$points), col = "black")
+# text(jitter(NI.AM.pcoa$points[,1], amount = 0.02), 
+#      jitter(NI.AM.pcoa$points[,2], amount = 0.02))
+#      #labels = row.names(NI.AM.pcoa$points), col = "black")
 title("Ordination of Non-invasive AM Species")
 
 ```
@@ -47,7 +46,7 @@ title("Ordination of Non-invasive AM Species")
 # invasive.ECM.ss
 # tree.species.ss
 
-NI.ECM.J <- vegdist(ninvasive.ECM.ss.L, method = "jaccard", binary = TRUE)
+NI.ECM.J <- vegdist(ninvasive.ECM.ss, method = "jaccard", binary = TRUE)
 NI.ECM.pcoa <- cmdscale(NI.ECM.J, eig = TRUE, k = 3)
 
 explainvar1 <- round(NI.ECM.pcoa$eig[1] / sum(NI.ECM.pcoa$eig), 3) * 100
@@ -68,9 +67,9 @@ abline(h = 0, v = 0, lty = 3)
 box(lwd = 2)
 points(NI.ECM.pcoa$points[,1], NI.ECM.pcoa$points[,2],
        pch = 19, cex = 1, bg = "gray", col = "azure3")
-text(jitter(NI.ECM.pcoa$points[,1], amount = 0.02), 
-     jitter(NI.ECM.pcoa$points[,2], amount = 0.02), 
-     labels = row.names(NI.ECM.pcoa$points), col = "black")
+# text(jitter(NI.ECM.pcoa$points[,1], amount = 0.02), 
+#      jitter(NI.ECM.pcoa$points[,2], amount = 0.02), 
+#      labels = row.names(NI.ECM.pcoa$points), col = "black")
 title("Ordination of Non-invasive ECM Species")
 ```
 
@@ -78,11 +77,11 @@ title("Ordination of Non-invasive ECM Species")
 ```{r}
 #ninvasive.AM.ss.L <-ninvasive.AM.ss[,-1]
 #ninvasive.ECM.ss.L <-ninvasive.AM.ss[,-1]
-invasive.AM.ss.L <-invasive.AM.ss[,-1]
+#invasive.AM.ss.L <-invasive.AM.ss[,-1]
 # invasive.ECM.ss
 # tree.species.ss
 
-I.AM.J <- vegdist(invasive.AM.ss.L, method = "jaccard", binary = TRUE)
+I.AM.J <- vegdist(invasive.AM.ss, method = "jaccard", binary = TRUE)
 I.AM.pcoa <- cmdscale(I.AM.J, eig = TRUE, k = 3)
 
 explainvar1 <- round(I.AM.pcoa$eig[1] / sum(I.AM.pcoa$eig), 3) * 100
@@ -104,19 +103,21 @@ box(lwd = 2)
 points(I.AM.pcoa$points[,1], I.AM.pcoa$points[,2],
        pch = 19, cex = 1, bg = "gray", col = "azure3")
 
-text(jitter(I.AM.pcoa$points[,1], amount = 0.02), 
-     jitter(I.AM.pcoa$points[,2], amount = 0.02), 
-     labels = row.names(I.AM.pcoa$points), col = "black")
+# text(jitter(I.AM.pcoa$points[,1], amount = 0.02), 
+#      jitter(I.AM.pcoa$points[,2], amount = 0.02), 
+#      labels = row.names(I.AM.pcoa$points), col = "black")
 
 title("Ordination of Invasive AM Species")
 
 ```
 
 ```{r}
+#constraintd ordiance 
+
 #ninvasive.AM.ss.L <-ninvasive.AM.ss[,-1]
 #ninvasive.ECM.ss.L <-ninvasive.AM.ss[,-1]
 #invasive.AM.ss.L <-invasive.AM.ss[,-1]
- invasive.ECM.ss <-invasive.ECM.ss[,-1]
+#invasive.ECM.ss <-invasive.ECM.ss[,-1]
 # tree.species.ss
 
 I.ECM.J <- vegdist(invasive.ECM.ss, method = "jaccard", binary = TRUE)
@@ -141,10 +142,76 @@ box(lwd = 2)
 points(I.ECM.pcoa$points[,1], I.ECM.pcoa$points[,2],
        pch = 19, cex = 1, bg = "gray", col = "azure3")
 
-text(jitter(I.ECM.pcoa$points[,1], amount = 0.02), 
-     jitter(I.ECM.pcoa$points[,2], amount = 0.02), 
-     labels = row.names(I.ECM.pcoa$points), col = "black")
+# text(jitter(I.ECM.pcoa$points[,1], amount = 0.02), 
+#      jitter(I.ECM.pcoa$points[,2], amount = 0.02), 
+#      labels = row.names(I.ECM.pcoa$points), col = "black")
 
 title("Ordination of Invasive ECM Species")
 ```
 
+```{r}
+#SS to use: ninvasive.AM.ss ninvasive.ECM.ss invasive.AM.ss invasive.ECM.ss
+#variable matrix: invasive.ss
+# NI.AM.db <-vegdist(ninvasive.AM.ss, method = "bray", binary =TRUE)
+# I.AM.db <-vegdist(invasive.AM.ss, method = "bray", binary =TRUE)
+# NI.ECM.db <-vegdist(ninvasive.ECM.ss, method = "bray", binary =TRUE)
+# I.ECM.db <-vegdist(invasive.ECM.ss, method = "bray", binary =TRUE)
+# tree.db <-vegdist(tree.species.ss, method = "bray")
+
+invasive.db <-vegdist(invasive.ss, method ="bray", binary = TRUE)
+
+tree.dbra <- dbrda(invasive.db ~ ., as.data.frame(invasive.ss))
+ordiplot(tree.dbra)
+invasive.dbrda.mod0 <- dbrda(invasive.db ~1, as.data.frame(invasive.ss))
+ordiplot(invasive.dbrda.mod0)
+tree.dbra.mod1 <-dbrda(invasive.db ~., as.data.frame(invasive.ss))
+
+#super computationally expensive (+45 minutes)
+library(future)
+library(furrr)
+plan(multisession) 
+tree.dbrda <- ordiR2step(invasive.dbrda.mod0, tree.dbra.mod1, perm.max =100)
+
+tree.dbrda$call
+tree.dbrda$anova
+ordiplot(tree.dbrda)
+
+
+permutest(tree.dbrda, permutations = 999)
+envfit(tree.dbrda, invasive.ss, perm = 999)
+
+dbrda.explainvar1 <- round(tree.dbrda$CCA$eig[1] / 
+                    sum(c(tree.dbrda$CCA$eig, tree.dbrda$CA$eig)), 3) * 100
+dbrda.explainvar2 <- round(tree.dbrda$CCA$eig[2] / 
+                    sum(c(tree.dbrda$CCA$eig, tree.dbrda$CA$eig)), 3) * 100
+
+#Plot
+par(mar = c(5, 5, 4, 4) + 0.1)
+
+plot(scores(tree.dbrda, display = "wa"), xlim = c(-1.3, 1.1), 
+     ylim = c(-1.1, 2.7), xlab = paste("dbRDA 1 (", dbrda.explainvar1, "%)", 
+     sep = ""), ylab = paste("dbRDA 2 (", dbrda.explainvar2, "%)", sep = ""),
+     pch = 16, cex = 2.0, type = "n", cex.lab = 1.5, 
+     cex.axis = 1.2, axes = FALSE)
+
+axis(side = 1, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+axis(side = 2, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+abline(h = 0, v = 0, lty = 3)
+box(lwd = 2)
+
+points(scores(tree.dbrda, display = "wa"),
+       pch = 19, cex = 3, bg = "gray", col = "gray")
+text(scores(tree.dbrda, display = "wa"), 
+     labels = row.names(scores(tree.dbrda, display = "wa")))
+
+vectors <- scores(tree.dbrda, display = "bp")
+arrows(0, 0, vectors[,1], vectors[, 2],
+       lwd = 2, lty = 1, length = 0.2, col = "red")
+text(vectors[,1], vectors[, 2], pos = 3, 
+     labels = row.names(vectors))
+axis(side = 3, lwd.ticks=2, cex.axis=1.2, las = 1, col = "red", lwd = 2.2,
+     at = pretty(range(vectors[, 1])) * 2, labels = pretty(range(vectors[, 1])))
+axis(side = 4, lwd.ticks=2, cex.axis=1.2, las = 1, col = "red", lwd = 2.2,
+     at = pretty(range(vectors[, 2])) * 2, labels = pretty(range(vectors[, 2])))
+
+```

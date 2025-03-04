@@ -1,0 +1,99 @@
+---
+title: "phylogeny"
+author: "Anna Lennon"
+date: "2025-03-03"
+output: html_document
+---
+```{r}
+package.list <- c('ape', 'seqinr', 'phylobase', 'adephylo', 'geiger', 'picante', 'stats', 'RColorBrewer', 'caper', 'phylolm', 'pmc', 'ggplot2', 'tidyr', 'dplyr', 'phangorn', 'pander')
+for (package in package.list) {
+  if (!require(package, character.only=TRUE, quietly=TRUE)) {
+    install.packages(package)
+    library(package, character.only=TRUE)
+  }
+}
+install.packages("pak")
+#comment out after first run to prevent continuous reinstall/update
+pak::pkg_install("msa")
+
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("Biostrings")
+
+library(bios2mds)
+library(Biostrings)
+library(ape)
+library(seqinr)
+library(phylobase)
+library(adephylo)
+library(geiger)
+library(picante)
+library(stats)
+library(RColorBrewer)
+library(phylolm)
+library(caper)
+library(pmc)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(phangorn)
+library(pander)
+library(msa)
+
+
+```
+
+
+```{r}
+#install.packages("devtools")
+library(devtools)
+devtools::install_github("jinyizju/V.PhyloMaker")
+require(V.PhyloMaker)
+
+SPCDinfo <- read.csv("/cloud/project/QB_biodiversity_project_EH/SPCDinfo.csv")
+
+treesp <- SPCDinfo[c("Scientific.Name", "Genus", "Family")] #extract relevant cols 
+treephylo <- phylo.maker(treesp, scenarios = "S3", nodes = nodes.info.1) #make tree
+plot.phylo(treephylo$scenario.3, cex = .2)
+treephylo$scenario.3 
+```
+
+
+```{r}
+tree.fasta <-readDNAStringSet("/cloud/project/QB_biodiversity_project_EH/Tree_fasta2.txt", format = "fasta")
+read.aln.tree <-msaMuscle(tree.fasta)
+save.aln.tree <-msaConvert(read.aln.tree, type = "bios2mds::align")
+
+tree.DNAbin.fasta <-as.DNAbin(read.aln.tree)
+window.L <-tree.DNAbin.fasta[,100:1000]
+image.DNAbin(window.L, cex.lab = .5)
+
+phyData.aln.tree <-msaConvert(read.aln.tree, type = "phangorn::phyDat")
+aln.dist.tree <-dist.ml(phyData.aln.tree)
+aln.NJ.tree <-NJ(aln.dist.tree)
+fit.tree <- pml(tree = aln.NJ.tree, data = phyData.aln.tree)
+
+# JC69 model
+fitJC.tree <- optim.pml(fit.tree, TRUE)
+
+# GTR model
+fitGTR.tree <- optim.pml(fit.tree, model = "GTR", optInv = TRUE, optGamma = TRUE, 
+          rearrangement = "NNI", control = pml.control(trace = 0))
+
+# Perform model selection with either an ANOVA test or with AIC
+anova(fitJC.tree, fitGTR.tree)
+AIC(fitJC.tree)
+AIC(fitGTR.tree)
+
+#phylo tree: aln.NJ.tree
+
+
+par(mar = c(1, 1, 2, 1) + 0.1)
+plot.phylo(aln.NJ.tree, type = "phylogram", direction = "right", 
+      show.tip.label = TRUE, use.edge.length = FALSE, cex = 0.6, 
+      label.offset = 1, main = "Maximum Likelihood with Support Values")
+add.scale.bar(cex = 0.7)
+nodelabels(ml.bootstrap$node.label, font = 2, bg = "white", 
+      frame = "r", cex = 0.5)
+```

@@ -1,22 +1,32 @@
+library(readxl)
+library(tibble)
+library(dplyr)
+library(tidyr)
+library(vegan)
 library(ggplot2)
-tree <-read.csv("TREE.csv")
-print(tree)
+library(tidyverse)
 
-tree.species.df <-data.frame(Plot_ID = c(tree$PLOT),
-                             Species_ID =c(tree$SPCD))
-print(tree.species.df)
+#Visualization of species present 
+dim(tree.species.df)
+myco.df.all <-rbind(invasive.myco.df, ninvasive.myco.df)
 
-print(tree.species.df$Plot_ID)
+ggplot(invasive.myco.df) +
+  aes(x = Plot_ID, y = MycoType, color = SPCD) +
+  geom_jitter() +  
+  xlab("Plot ID") +
+  ylab("Mycorrhizal Association") +
+  ggtitle("Distribution of Mycorrhizal Type by Species in Invasive Plots") +
+  theme_minimal()
 
-#Site by Species df 
-tree.ss.df <- as.data.frame.matrix(table(tree.species.df$Plot_ID, tree.species.df$Species_ID))
-tree.ss.df <- rownames_to_column(tree.ss.df, var = "Plot_ID")
-print(tree.ss.df)
+ggplot(ninvasive.myco.df) +
+  aes(x = Plot_ID, y = MycoType, color = SPCD) +
+  geom_jitter() +  
+  xlab("Plot ID") +
+  ylab("Mycorrhizal Association") +
+  ggtitle("Distribution of Mycorrhizal Type by Species in NonInvasive Plots") +
+  theme_minimal()
 
-tree.species.only.df <- tree.ss.df[, 2:ncol(tree.ss.df)]
-##########################################################
-#Could make bar graph for each plot 
-#pca?
-site1 <- tree.species.only.df[1,]
-site1
+
+
+
 

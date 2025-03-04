@@ -103,11 +103,11 @@ SimpD <- function(x = ""){
 
 ```{r}
 #observed richeness- exlcudes plot number 
-sobs.ni.AM <- S.obs(ninvasive.AM.ss[,-1])
-sobs.ni.AM <- S.obs(ninvasive.AM.ss[,-1])
-sobs.i.AM <- S.obs(invasive.AM.ss[,-1])
-sobs.ni.ECM <- S.obs(ninvasive.ECM.ss[,-1])
-sobs.i.ECM<- S.obs(invasive.ECM.ss[,-1])
+sobs.ni.AM <- S.obs(ninvasive.AM.ss)
+sobs.ni.AM <- S.obs(ninvasive.AM.ss)
+sobs.i.AM <- S.obs(invasive.AM.ss)
+sobs.ni.ECM <- S.obs(ninvasive.ECM.ss)
+sobs.i.ECM<- S.obs(invasive.ECM.ss)
 
 sobs.all <-S.obs(tree.species.ss)
 
@@ -183,16 +183,16 @@ TukeyHSD(sobs.aov)
 
 ```{r}
 #SimpE
-# ninvasive.AM.ss
+#ninvasive.AM.ss <-as.numeric(ninvasive.AM.ss)
 # ninvasive.ECM.ss
 # invasive.AM.ss
 # invasive.ECM.ss
 #tree.species.ss
 
-SE.NI.AM <-(SimpE(ninvasive.AM.ss[,-1]))
-SE.I.AM <-(SimpE(invasive.AM.ss[,-1]))
-SE.NI.ECM<-(SimpE(ninvasive.ECM.ss[,-1]))
-SE.I.ECM <-(SimpE(invasive.ECM.ss[,-1]))
+SE.NI.AM <-(SimpE(ninvasive.AM.ss))
+SE.I.AM <-(SimpE(invasive.AM.ss))
+SE.NI.ECM<-(SimpE(ninvasive.ECM.ss))
+SE.I.ECM <-(SimpE(invasive.ECM.ss))
 
 SE.NI.AM <- data.frame(Group = "Non-Invasive AM", SimpE = SE.NI.AM)
 SE.I.AM <- data.frame(Group = "Invasive AM", SimpE = SE.I.AM)

@@ -16,9 +16,7 @@ getwd()
 
 ```
 
-
-
-```{r}
+If needed: 
 
 #getwd()
 #setwd("/cloud/project/QB_biodiversity_project_EH/")
@@ -137,21 +135,13 @@ ninvasive.both.ss
 invasive.AM.ss
 invasive.ECM.ss
 invasive.both.ss
-```
 
 
 
 ```{r}
-# Install necessary packages if not already installed
-if (!require("readxl")) install.packages("readxl")
-if (!require("dplyr")) install.packages("dplyr")
-
-library(readxl)
-library(dplyr)
-library(tidyr)
-
 # Load data
-all_plots <- read_excel("PLOT.xlsx")
+PLOT <- read_excel("PLOT.xlsx")
+SPCD <-PLOT$SPCD
 
 
 # Prepare data frames with counts of distinct species per plot
@@ -197,5 +187,6 @@ result <- dbrda(tree_matrix ~ invasive_matrix)
 
 
 ```
+
 
 

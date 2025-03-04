@@ -1,0 +1,25 @@
+---
+title: "Figures"
+author: "Anna Lennon"
+date: "2025-02-14"
+output: html_document
+---
+
+
+```{r}
+#Invasive 
+
+levelplot(as.matrix(tree.bray.iAM), aspect = "iso", col.regions =inferno,
+          xlab = "Plot", ylab = "Plot", scales =list(cex =.5),
+          main = "Bray-Curtis Distance")
+
+```
+
+```{r}
+order.iAM <-rev(attr(tree.bray.iAM, "Labels"))
+levelplot(as.matrix(tree.bray.iAM)[,order.iAM], aspect = "iso", col.regions =inferno,
+          xlab = "Plot", ylab = "Plot", scales =list(cex =.5),
+          main = "Bray-Curtis Distance")
+
+```
+

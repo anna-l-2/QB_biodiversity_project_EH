@@ -1,0 +1,24 @@
+Workflow:
+  1. Run "base_df.R" to get base dataframes and site by species into global environment
+    a. This reduces the load on each indvidual file
+    b. Organizes source data 
+  2. Run various analysis 
+    a. each analysis file contains all necessary base data files to run (ie phylogeny          has fasta files)
+    b. However, the required site by species matrices or environmental matrices are          not included and need to be run prior with "base_df.R"
+   
+Base data files:
+ 1. TREE.csv 
+ 2. 
+ 3. SEEDLING.xlsx
+ 4. PLOT.xlsx
+ 
+Reference Files
+ 1.MycoType.ref2.xlsx
+ 2.REF_FOREST_TYPE.xlsx
+ 3.REF_SPECIES.xlsx
+ 
+  
+Analysis files:
+ 1. alpha_diversity_analysis.Rmd
+
+

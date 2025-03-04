@@ -2,6 +2,8 @@
 library(vegan)
 library(tibble)
 library(lattice)
+library(viridisLite)
+library(viridis)
 
 # Read the CSV file
 tree <- read.csv("TREE.csv")
@@ -12,7 +14,7 @@ tree.species.df <- data.frame(Plot_ID = tree$PLOT, Species_ID = tree$SPCD)
 
 tree.ss.df <- as.data.frame.matrix(table(tree.species.df$Plot_ID, tree.species.df$Species_ID))
 tree.ss.df <- rownames_to_column(tree.ss.df, var = "Plot_ID")
-tree.ss.df <-tree.ss.df[1:100,1:100]
+tree.ss.df <-tree.ss.df[1:6586,1:110]
 #print(tree.ss.df)
 
 tree.species.only.df <- tree.ss.df[, -1]
