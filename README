@@ -1,21 +1,22 @@
-Data set: Continous Forrest Inventory 
-Question: What is the influence of the type of mycrorhizal association on tree species abundance when exposed to the pressure of invasive species? 
-Hypothesis: 
-Week 1:
-Determine dataset: Continous Forrest Inventory
-
-Week 2 
-Load that dataset.
-How many sites are there?
-How many species are there in the entire site-by-species matrix?
-Any other interesting observations based on what you learned this week?
-
-Week 3 
-Determined question
-Elaine- find mycrozhyral association 
-Anna- look at invasive species data- see if plots have invansives
-Will have two site by species matrix 1 for AM 1 for ECM 
-Then further segregate if plot has invansives v does not - will apply to species to filter out different the AM or ECM
-  Follow up question: Does number of invasives influence tree species abundance
-End goal: 4 different Site by species matrix: AM+Invasives; AM-No invasives; ECM+Invasives; ECM-No invasives - code stored in base_df.R
-
+Workflow:
+  1. Run "base_df.R" to get base dataframes and site by species into global environment
+    a. This reduces the load on each indvidual file
+    b. Organizes source data 
+  2. Run various analysis 
+    a. each analysis file contains all necessary base data files to run (ie phylogeny          has fasta files)
+    b. However, the required site by species matrices or environmental matrices are          not included and need to be run prior with "base_df.R"
+   
+Base data files:
+ 1. TREE.csv 
+ 2. 
+ 3. SEEDLING.xlsx
+ 4. PLOT.xlsx
+ 
+Reference Files
+ 1.MycoType.ref2.xlsx
+ 2.REF_FOREST_TYPE.xlsx
+ 3.REF_SPECIES.xlsx
+ 
+  
+Analysis files:
+ 1. alpha_diversity_analysis.Rmd
