@@ -185,33 +185,17 @@ dbrda.explainvar1 <- round(tree.dbrda$CCA$eig[1] /
 dbrda.explainvar2 <- round(tree.dbrda$CCA$eig[2] / 
                     sum(c(tree.dbrda$CCA$eig, tree.dbrda$CA$eig)), 3) * 100
 
-#Plot
-par(mar = c(5, 5, 4, 4) + 0.1)
+```
 
-plot(scores(tree.dbrda, display = "wa"), xlim = c(-1.3, 1.1), 
-     ylim = c(-1.1, 2.7), xlab = paste("dbRDA 1 (", dbrda.explainvar1, "%)", 
-     sep = ""), ylab = paste("dbRDA 2 (", dbrda.explainvar2, "%)", sep = ""),
-     pch = 16, cex = 2.0, type = "n", cex.lab = 1.5, 
-     cex.axis = 1.2, axes = FALSE)
+```{r}
+invasive.myco.db <-vegdist(invasive.myco.ss, method ="bray", binary = TRUE)
 
-axis(side = 1, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
-axis(side = 2, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
-abline(h = 0, v = 0, lty = 3)
-box(lwd = 2)
+tree.dbra <- dbrda(invasive.myco.db ~ ., as.data.frame(invasive.myco.ss))
+ordiplot(tree.dbra)
 
-points(scores(tree.dbrda, display = "wa"),
-       pch = 19, cex = 3, bg = "gray", col = "gray")
-text(scores(tree.dbrda, display = "wa"), 
-     labels = row.names(scores(tree.dbrda, display = "wa")))
+ninvasive.myco.db <-vegdist(ninvasive.myco.ss, method ="bray", binary = TRUE)
 
-vectors <- scores(tree.dbrda, display = "bp")
-arrows(0, 0, vectors[,1], vectors[, 2],
-       lwd = 2, lty = 1, length = 0.2, col = "red")
-text(vectors[,1], vectors[, 2], pos = 3, 
-     labels = row.names(vectors))
-axis(side = 3, lwd.ticks=2, cex.axis=1.2, las = 1, col = "red", lwd = 2.2,
-     at = pretty(range(vectors[, 1])) * 2, labels = pretty(range(vectors[, 1])))
-axis(side = 4, lwd.ticks=2, cex.axis=1.2, las = 1, col = "red", lwd = 2.2,
-     at = pretty(range(vectors[, 2])) * 2, labels = pretty(range(vectors[, 2])))
-
+ntree.dbra <- dbrda(ninvasive.myco.db ~ ., as.data.frame(ninvasive.myco.ss))
+ordiplot(ntree.dbra)
+  
 ```

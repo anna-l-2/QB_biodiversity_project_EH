@@ -181,34 +181,48 @@ TukeyHSD(sobs.aov)
 ```
 
 
+
 ```{r}
-#SimpE
-#ninvasive.AM.ss <-as.numeric(ninvasive.AM.ss)
-# ninvasive.ECM.ss
-# invasive.AM.ss
-# invasive.ECM.ss
-#tree.species.ss
+#NI AM
+ninvasive.AM.ss.t <-t(ninvasive.AM.ss)
+ninvasive.AM.ss.S <-S.obs(ninvasive.AM.ss.t)
+min.N <- min(rowSums(ninvasive.AM.ss.t))    
+S.rarefy <- rarefy(x = ninvasive.AM.ss.t , sample = min.N, se = TRUE)   
+rarecurve(x = ninvasive.AM.ss.t , step = 20, col = "azure3", cex = 0.6, las = 1)
+abline(0, 1, col = 'red')             
+text(1500, 1500, "1:1", pos = 2, col = 'red')
+title(main = "Rarefaction Curve of Non-Invasive AM Samples")
 
-SE.NI.AM <-(SimpE(ninvasive.AM.ss))
-SE.I.AM <-(SimpE(invasive.AM.ss))
-SE.NI.ECM<-(SimpE(ninvasive.ECM.ss))
-SE.I.ECM <-(SimpE(invasive.ECM.ss))
+#NI ECM
+ninvasive.ECM.ss.t <-t(ninvasive.ECM.ss)
+ninvasive.ECM.ss.S <-S.obs(ninvasive.ECM.ss.t)
+min.I.ecm <- min(rowSums(ninvasive.ECM.ss.t))    
+S.rarefy <- rarefy(x = ninvasive.ECM.ss.t , sample = min.I.ecm, se = TRUE)   
+rarecurve(x = ninvasive.ECM.ss.t , step = 20, col = "azure3", cex = 0.6, las = 1)
+abline(0, 1, col = 'red')             
+text(1500, 1500, "1:1", pos = 2, col = 'red')
+title(main = "Rarefaction Curve of Non-Invasive ECM Samples")
 
-SE.NI.AM <- data.frame(Group = "Non-Invasive AM", SimpE = SE.NI.AM)
-SE.I.AM <- data.frame(Group = "Invasive AM", SimpE = SE.I.AM)
-SE.NI.ECM <- data.frame(Group = "Non-Invasive ECM", SimpE = SE.NI.ECM)
-SE.I.ECM <- data.frame(Group = "Invasive ECM", SimpE = SE.I.ECM)
-SE.combined <- bind_rows(SE.NI.AM, SE.I.AM, SE.NI.ECM, SE.I.ECM)
+#I AM
+invasive.AM.ss.t <-t(invasive.AM.ss)
+invasive.AM.ss.S <-S.obs(invasive.AM.ss.t)
+min.IAM <- min(rowSums(invasive.AM.ss.t))    
+S.rarefy <- rarefy(x = invasive.AM.ss.t , sample = min.IAM, se = TRUE)   
+rarecurve(x = invasive.AM.ss.t , step = 20, col = "azure3", cex = 0.6, las = 1)
+abline(0, 1, col = 'red')             
+text(200, 200, "1:1", pos = 2, col = 'red')
+title(main = "Rarefaction Curve of Invasive AM Samples")
 
-# Plot
-ggplot(SE.combined, aes(x = Group, y = SimpE)) + 
-    geom_boxplot(fill = "lightblue2", alpha = 0.2) + 
-    xlab("Group") + 
-    ylab("Simpson's Evenness (SimpE)") +
-    ggtitle("Simpson's Evenness Across Groups") +
-    theme_minimal()
+#NI ECM
+invasive.ECM.ss.t <-t(invasive.ECM.ss)
+invasive.ECM.ss.S <-S.obs(invasive.ECM.ss.t)
+min.IECM <- min(rowSums(invasive.ECM.ss.t))    
+S.rarefy <- rarefy(x = invasive.ECM.ss.t , sample = min.IECM, se = TRUE)   
+rarecurve(x = invasive.ECM.ss.t , step = 20, col = "azure3", cex = 0.6, las = 1)
+abline(0, 1, col = 'red')             
+text(100, 100, "1:1", pos = 2, col = 'red')
+title(main = "Rarefaction Curve of Invasive ECM Samples")
+
 
 ```
-
-
 

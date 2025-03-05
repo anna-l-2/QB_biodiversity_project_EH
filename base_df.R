@@ -87,12 +87,16 @@ invasive.ss <-as.data.frame.matrix(table(invasive.df$Plot_ID, invasive.df$SPCD))
 #AM/ECM
 
 ninvasive.myco.df <- merge(ninvasive.plots.df, myco, by="SPCD", all.x=TRUE, all.y=FALSE)
+ninvasive.myco.ss <- as.data.frame.matrix(table(ninvasive.myco.df$Plot_ID, ninvasive.myco.df$MycoType))
 
 ninvasive.ECM.df <- subset(ninvasive.myco.df, ninvasive.myco.df$MycoType==1)
 ninvasive.AM.df <- subset(ninvasive.myco.df, ninvasive.myco.df$MycoType==2)
 ninvasive.both.df <- subset(ninvasive.myco.df, ninvasive.myco.df$MycoType==3)
 
+
 invasive.myco.df <-merge(invasive.plots.df, myco, by="SPCD", all.x=TRUE, all.y=FALSE)
+
+invasive.myco.ss <- as.data.frame.matrix(table(invasive.myco.df$Plot_ID, invasive.myco.df$MycoType))
 invasive.ECM.df <- subset(invasive.myco.df, invasive.myco.df$MycoType==1)
 invasive.AM.df <- subset(invasive.myco.df, invasive.myco.df$MycoType==2)
 invasive.both.df <- subset(invasive.myco.df, invasive.myco.df$MycoType==3)
