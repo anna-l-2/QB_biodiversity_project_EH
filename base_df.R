@@ -78,8 +78,8 @@ ninvasive.plots.df <- tree.species.df[!tree.species.df$Plot %in% invasive_plots,
 # print(ninvasive.plots.df)
 
 #site by species invasive
-invasive.df <-data.frame(Plot_ID= c(invasive.plots.df$Plot_ID),
-                         SPCD =c(invasive.plots.df$SPCD))  
+invasive.df <-data.frame(Plot_ID= c(invasive$PLOT),
+                         SPCD =c(invasive$VEG_SPCD))  
 invasive.ss <-as.data.frame.matrix(table(invasive.df$Plot_ID, invasive.df$SPCD))
 
 

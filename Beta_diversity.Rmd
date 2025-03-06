@@ -2,8 +2,23 @@
 title: "Beta diversity"
 author: "Anna Lennon"
 date: "2025-02-28"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
+```{r}
+library(readxl)
+library(tibble)
+library(dplyr)
+library(tidyr)
+library(vegan)
+library(lattice)
+library("ade4")
+library("viridis")
+library("gplots")
+library(tidyverse)
+```
+
 
 ```{r}
 # ninvasive.ECM.ss
@@ -166,7 +181,7 @@ invasive.dbrda.mod0 <- dbrda(invasive.db ~1, as.data.frame(invasive.ss))
 ordiplot(invasive.dbrda.mod0)
 tree.dbra.mod1 <-dbrda(invasive.db ~., as.data.frame(invasive.ss))
 
-#super computationally expensive (+45 minutes)
+#takes a minute
 library(future)
 library(furrr)
 plan(multisession) 
