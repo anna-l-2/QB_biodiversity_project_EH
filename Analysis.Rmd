@@ -1,0 +1,501 @@
+---
+title: "All_analysis"
+author: "Anna Lennon"
+date: "2025-03-07"
+output:
+  pdf_document: default
+  html_document: default
+---
+```{r}
+library(readxl)
+library(tibble)
+library(dplyr)
+library(tidyr)
+library(vegan)
+library(ggplot2)
+library(tidyverse)
+```
+
+
+```{r}
+#tree data 
+tree <-read.csv("TREE.csv")
+
+tree.species.df <-data.frame(Plot_ID = c(tree$PLOT),
+                             SPCD =c(tree$SPCD))
+
+
+tree.species.ss <-as.data.frame.matrix(table(tree.species.df$Plot_ID, tree.species.df$SPCD))
+str(tree.species.df) #plot and species id 
+#print(tree.species.df)
+#print(unique(tree.species.df$SPCD))
+
+#Myco assocaitions
+myco <-as.data.frame(read_xlsx("MycoType_ref2.xlsx"))
+myco<- myco[,-c(3:7)]
+str(myco)
+#print(unique(myco$SPCD))
+
+
+#invasive
+#invasive <-read_xlsx("INVASIVE.xlsx")
+invasive <-read_xlsx("INVASIVE_SUBPLOT_SPP.xlsx")
+str(invasive)
+#print(invasive)
+
+#print(unique(invasive.df))
+
+#References
+#Plot ID Code 
+# plotID.master <-read_xlsx(path = "PLOT.xlsx")
+# print(plotID.master)
+
+#Clean- make sure has same species
+untree.species <- unique(tree.species.df$SPCD)
+unmyco.species <-unique(myco$SPCD)
+length(untree.species)
+length(unmyco.species)
+#print(sort(untree.species))
+#print(sort(unmyco.species))
+setdiff(untree.species, unmyco.species)
+
+tree.species.df <- tree.species.df %>%
+  filter(!SPCD %in% c(999, 998))  
+
+
+#Filter if species has invasives 
+
+invasive_plots <- unique(invasive$PLOT)
+invasive.plots.df <- tree.species.df[tree.species.df$Plot %in% invasive_plots, ]
+ninvasive.plots.df <- tree.species.df[!tree.species.df$Plot %in% invasive_plots, ]
+
+# invasive_plots <-as.data.frame(invasive$PLOT)
+# invasive_plots <- unique(invasive_plots)
+# #print(invasive_plots)
+# 
+# invasive.plots.df <- data.frame()
+# ninvasive.plots.df <- data.frame()
+# 
+# for (i in seq_len(nrow(tree.species.df))) {  
+#   if (tree.species.df$Plot[i] %in% invasive_plots) {  
+#     invasive.plots.df <- rbind(invasive.plots.df, tree.species.df[i, ])  
+#   } else {  
+#     ninvasive.plots.df <- rbind(ninvasive.plots.df, tree.species.df[i, ])  
+#   }
+# }
+# invasive_plots <- unique(invasive.df$Plot_ID)
+# print(invasive_plots)
+# print(invasive.plots.df)
+# print(ninvasive.plots.df)
+
+#site by species invasive
+invasive.df <-data.frame(Plot_ID= c(invasive$PLOT),
+                         SPCD =c(invasive$VEG_SPCD))  
+invasive.ss <-as.data.frame.matrix(table(invasive.df$Plot_ID, invasive.df$SPCD))
+
+
+
+#AM/ECM
+
+ninvasive.myco.df <- merge(ninvasive.plots.df, myco, by="SPCD", all.x=TRUE, all.y=FALSE)
+ninvasive.myco.ss <- as.data.frame.matrix(table(ninvasive.myco.df$Plot_ID, ninvasive.myco.df$MycoType))
+
+ninvasive.ECM.df <- subset(ninvasive.myco.df, ninvasive.myco.df$MycoType==1)
+ninvasive.AM.df <- subset(ninvasive.myco.df, ninvasive.myco.df$MycoType==2)
+ninvasive.both.df <- subset(ninvasive.myco.df, ninvasive.myco.df$MycoType==3)
+
+
+invasive.myco.df <-merge(invasive.plots.df, myco, by="SPCD", all.x=TRUE, all.y=FALSE)
+
+invasive.myco.ss <- as.data.frame.matrix(table(invasive.myco.df$Plot_ID, invasive.myco.df$MycoType))
+invasive.ECM.df <- subset(invasive.myco.df, invasive.myco.df$MycoType==1)
+invasive.AM.df <- subset(invasive.myco.df, invasive.myco.df$MycoType==2)
+invasive.both.df <- subset(invasive.myco.df, invasive.myco.df$MycoType==3)
+
+#Site by species noninvasive
+
+ninvasive.AM.ss <- as.data.frame.matrix(table(ninvasive.AM.df$Plot_ID, ninvasive.AM.df$SPCD))
+#ninvasive.AM.ss <- rownames_to_column(ninvasive.AM.ss, var = "Plot_ID")
+#ninvasive.AM.ss.L <-ninvasive.AM.ss[,-1]
+
+ninvasive.ECM.ss <- as.data.frame.matrix(table(ninvasive.ECM.df$Plot_ID, ninvasive.ECM.df$SPCD))
+#ninvasive.ECM.ss <- rownames_to_column(ninvasive.ECM.ss, var = "Plot_ID")
+#ninvasive.ECM.ss.L <-ninvasive.ECM.ss[,-1]
+
+# ninvasive.both.ss <- as.data.frame.matrix(table(ninvasive.both.df$Plot_ID, ninvasive.both.df$SPCD))
+# ninvasive.both.ss <- rownames_to_column(ninvasive.both.ss, var = "Plot_ID")
+
+#Site by species: Invasive
+invasive.AM.ss <- as.data.frame.matrix(table(invasive.AM.df$Plot_ID, invasive.AM.df$SPCD))
+#invasive.AM.ss <- rownames_to_column(invasive.AM.ss, var = "Plot_ID")
+#invasive.AM.ss <-invasive.AM.ss[,-1]
+
+invasive.ECM.ss <- as.data.frame.matrix(table(invasive.ECM.df$Plot_ID, invasive.ECM.df$SPCD))
+# invasive.ECM.ss <- rownames_to_column(invasive.ECM.ss, var = "Plot_ID")
+# invasive.ECM.ss.L <-invasive.ECM.ss[,-1]
+
+# invasive.both.ss <- as.data.frame.matrix(table(invasive.both.df$Plot_ID, invasive.both.df$SPCD))
+# invasive.both.ss <- rownames_to_column(invasive.both.ss, var = "Plot_ID")
+
+
+#OVERALL 
+# ninvasive.AM.ss
+# ninvasive.ECM.ss
+# ninvasive.both.ss
+# 
+# invasive.AM.ss
+# invasive.ECM.ss
+# invasive.both.ss
+```
+
+```{r}
+#Visualization of species present 
+dim(tree.species.df)
+myco.df.all <-rbind(invasive.myco.df, ninvasive.myco.df)
+
+ggplot(invasive.myco.df) +
+  aes(x = Plot_ID, y = MycoType, color = SPCD) +
+  geom_jitter() +  
+  xlab("Plot ID") +
+  ylab("Mycorrhizal Association") +
+  ggtitle("Distribution of Mycorrhizal Type by Species in Invasive Plots") +
+  theme_minimal()
+
+ggplot(ninvasive.myco.df) +
+  aes(x = Plot_ID, y = MycoType, color = SPCD) +
+  geom_jitter() +  
+  xlab("Plot ID") +
+  ylab("Mycorrhizal Association") +
+  ggtitle("Distribution of Mycorrhizal Type by Species in NonInvasive Plots") +
+  theme_minimal()
+
+tree.db <-vegdist(tree.species.df[,2], method = "bray")
+
+order <-rev(attr(tree.db, "Labels"))
+levelplot(as.matrix(tree.db)[,order], aspect = "iso", col.regions =inferno,
+          xlab = "Plot", ylab = "Plot", scales =list(cex =.5),
+          main = "Bray-Curtis Distance")
+```
+
+```{r}
+#Alpha 
+#Observed richness
+S.obs <- function(x = ""){
+  rowSums(x > 0) * 1
+}
+
+#observed richeness- exlcudes plot number 
+sobs.ni.AM <- S.obs(ninvasive.AM.ss)
+sobs.ni.AM <- S.obs(ninvasive.AM.ss)
+sobs.i.AM <- S.obs(invasive.AM.ss)
+sobs.ni.ECM <- S.obs(ninvasive.ECM.ss)
+sobs.i.ECM<- S.obs(invasive.ECM.ss)
+
+sobs.all <-S.obs(tree.species.ss)
+
+
+# mean(sobs.ni.AM)
+# mean(sobs.i.AM)
+# mean(sobs.ni.ECM)
+# mean(sobs.i.ECM)
+
+sobs.ni.AM <- data.frame(Group = "Non-Invasive AM", Observed_Richness = sobs.ni.AM)
+sobs.i.AM <- data.frame(Group = "Invasive AM", Observed_Richness = sobs.i.AM)
+sobs.ni.ECM <- data.frame(Group = "Non-Invasive ECM", Observed_Richness = sobs.ni.ECM)
+sobs.i.ECM <- data.frame(Group = "Invasive ECM", Observed_Richness = sobs.i.ECM)
+sobs.all.df <-data.frame(Group= "All Samples", Observed_Richness =sobs.all)
+
+
+sobs.i.am.box<- ggplot(sobs.i.AM, aes(y = sobs.i.AM)) + 
+    geom_boxplot(fill="azure2", alpha=0.2) + 
+    xlab("Observed Richness")
+
+sobs.ni.am.box<- ggplot(sobs.ni.AM, aes(y = sobs.i.AM)) + 
+    geom_boxplot(fill="azure2", alpha=0.2) + 
+    xlab("Observed Richness")
+
+sobs.i.ECM.box<- ggplot(sobs.i.ECM, aes(y = sobs.i.AM)) + 
+    geom_boxplot(fill="azure2", alpha=0.2) + 
+    xlab("Observed Richness")
+
+sobs.ni.ECM.box<- ggplot(sobs.ni.ECM, aes(y = sobs.i.AM)) + 
+    geom_boxplot(fill="azure2", alpha=0.2) + 
+    xlab("Observed Richness")
+
+
+sobs_data <- bind_rows(sobs.ni.AM, sobs.i.AM, sobs.ni.ECM, sobs.i.ECM, sobs.all.df)
+
+# # Perform clustering
+# clusters <- kmeans(sobs_data$Observed_Richness, centers = 3, iter.max = 10, nstart = 1)
+# 
+# centroids <- clusters$centers
+# 
+# ordered_centroids <- order(centroids)
+# 
+# 
+# sobs_data$Cluster <- factor(clusters$cluster, levels = ordered_centroids)
+# sobs_data$Cluster <- as.numeric(sobs_data$Cluster)
+
+
+# Boxplot visualization
+ggplot(sobs_data, aes(x = Group, y = Observed_Richness)) + 
+    geom_boxplot(fill = "lightblue2", alpha = 0.2) + 
+    xlab("Group") + 
+    ylab("Observed Richness") +
+    ggtitle("Observed Richness Across Groups") +
+    theme_minimal()
+
+
+#anova
+sobs.aov <- aov(Observed_Richness ~ Group,
+                data = sobs_data)
+summary(sobs.aov)
+TukeyHSD(sobs.aov)
+
+
+#NI AM
+ninvasive.AM.ss.t <-t(ninvasive.AM.ss)
+ninvasive.AM.ss.S <-S.obs(ninvasive.AM.ss.t)
+min.N <- min(rowSums(ninvasive.AM.ss.t))    
+S.rarefy <- rarefy(x = ninvasive.AM.ss.t , sample = min.N, se = TRUE)   
+rarecurve(x = ninvasive.AM.ss.t , step = 20, col = "azure3", cex = 0.6, las = 1)
+abline(0, 1, col = 'red')             
+text(1500, 1500, "1:1", pos = 2, col = 'red')
+title(main = "Rarefaction Curve of Non-Invasive AM Samples")
+
+#NI ECM
+ninvasive.ECM.ss.t <-t(ninvasive.ECM.ss)
+ninvasive.ECM.ss.S <-S.obs(ninvasive.ECM.ss.t)
+min.I.ecm <- min(rowSums(ninvasive.ECM.ss.t))    
+S.rarefy <- rarefy(x = ninvasive.ECM.ss.t , sample = min.I.ecm, se = TRUE)   
+rarecurve(x = ninvasive.ECM.ss.t , step = 20, col = "azure3", cex = 0.6, las = 1)
+abline(0, 1, col = 'red')             
+text(1500, 1500, "1:1", pos = 2, col = 'red')
+title(main = "Rarefaction Curve of Non-Invasive ECM Samples")
+
+#I AM
+invasive.AM.ss.t <-t(invasive.AM.ss)
+invasive.AM.ss.S <-S.obs(invasive.AM.ss.t)
+min.IAM <- min(rowSums(invasive.AM.ss.t))    
+S.rarefy <- rarefy(x = invasive.AM.ss.t , sample = min.IAM, se = TRUE)   
+rarecurve(x = invasive.AM.ss.t , step = 20, col = "azure3", cex = 0.6, las = 1)
+abline(0, 1, col = 'red')             
+text(200, 200, "1:1", pos = 2, col = 'red')
+title(main = "Rarefaction Curve of Invasive AM Samples")
+
+#NI ECM
+invasive.ECM.ss.t <-t(invasive.ECM.ss)
+invasive.ECM.ss.S <-S.obs(invasive.ECM.ss.t)
+min.IECM <- min(rowSums(invasive.ECM.ss.t))    
+S.rarefy <- rarefy(x = invasive.ECM.ss.t , sample = min.IECM, se = TRUE)   
+rarecurve(x = invasive.ECM.ss.t , step = 20, col = "azure3", cex = 0.6, las = 1)
+abline(0, 1, col = 'red')             
+text(100, 100, "1:1", pos = 2, col = 'red')
+title(main = "Rarefaction Curve of Invasive ECM Samples")
+```
+
+```{r}
+library(readxl)
+library(tibble)
+library(dplyr)
+library(tidyr)
+library(vegan)
+library(lattice)
+library("ade4")
+library("viridis")
+library("gplots")
+library(tidyverse)
+```
+
+
+```{r}
+# ninvasive.ECM.ss
+# invasive.AM.ss
+# invasive.ECM.ss
+# tree.species.ss
+
+NI.AM.J <-vegdist(ninvasive.AM.ss, method = "jaccard", binary =TRUE)
+NI.AM.pcoa <-cmdscale(NI.AM.J, eig =TRUE, k =3)
+explainvar1 <- round(NI.AM.pcoa$eig[1] / sum(NI.AM.pcoa$eig), 3) * 100
+explainvar2 <- round(NI.AM.pcoa$eig[2] / sum(NI.AM.pcoa$eig), 3) * 100
+explainvar3 <- round(NI.AM.pcoa$eig[3] / sum(NI.AM.pcoa$eig), 3) * 100
+sum.eig <- sum(explainvar1, explainvar2, explainvar3)
+#Plot
+par(mar = c(5, 5, 1, 2) + 0.1)
+plot(NI.AM.pcoa$points[ ,1], NI.AM.pcoa$points[ ,2], ylim = c(-0.2, 0.7),
+     xlab = paste("PCoA 1 (", explainvar1, "%)", sep = ""),
+     ylab = paste("PCoA 2 (", explainvar2, "%)", sep = ""),
+     pch = 16, cex = 2.0, type = "n", cex.lab = 1.5, cex.axis = 1.2, axes = FALSE)
+
+axis(side = 1, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+axis(side = 2, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+abline(h = 0, v = 0, lty = 3)
+box(lwd = 2)
+
+points(NI.AM.pcoa$points[ ,1], NI.AM.pcoa$points[ ,2],
+       pch = 19, cex = 1, bg = "gray", col = "azure3")
+# text(jitter(NI.AM.pcoa$points[,1], amount = 0.02), 
+#      jitter(NI.AM.pcoa$points[,2], amount = 0.02))
+#      #labels = row.names(NI.AM.pcoa$points), col = "black")
+title("Ordination of Non-invasive AM Species")
+
+```
+
+
+```{r}
+#ninvasive.AM.ss.L <-ninvasive.AM.ss[,-1]
+#ninvasive.ECM.ss.L <-ninvasive.AM.ss[,-1]
+# invasive.AM.ss
+# invasive.ECM.ss
+# tree.species.ss
+
+NI.ECM.J <- vegdist(ninvasive.ECM.ss, method = "jaccard", binary = TRUE)
+NI.ECM.pcoa <- cmdscale(NI.ECM.J, eig = TRUE, k = 3)
+
+explainvar1 <- round(NI.ECM.pcoa$eig[1] / sum(NI.ECM.pcoa$eig), 3) * 100
+explainvar2 <- round(NI.ECM.pcoa$eig[2] / sum(NI.ECM.pcoa$eig), 3) * 100
+explainvar3 <- round(NI.ECM.pcoa$eig[3] / sum(NI.ECM.pcoa$eig), 3) * 100
+sum.eig <- sum(explainvar1, explainvar2, explainvar3)
+
+# Plot
+par(mar = c(5, 5, 1, 2) + 0.1)
+plot(NI.ECM.pcoa$points[,1], NI.ECM.pcoa$points[,2], ylim = c(-0.2, 0.7),
+     xlab = paste("PCoA 1 (", explainvar1, "%)", sep = ""),
+     ylab = paste("PCoA 2 (", explainvar2, "%)", sep = ""),
+     pch = 16, cex = 2.0, type = "n", cex.lab = 1.5, cex.axis = 1.2, axes = FALSE)
+
+axis(side = 1, labels = TRUE, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+axis(side = 2, labels = TRUE, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+abline(h = 0, v = 0, lty = 3)
+box(lwd = 2)
+points(NI.ECM.pcoa$points[,1], NI.ECM.pcoa$points[,2],
+       pch = 19, cex = 1, bg = "gray", col = "azure3")
+# text(jitter(NI.ECM.pcoa$points[,1], amount = 0.02), 
+#      jitter(NI.ECM.pcoa$points[,2], amount = 0.02), 
+#      labels = row.names(NI.ECM.pcoa$points), col = "black")
+title("Ordination of Non-invasive ECM Species")
+```
+
+
+```{r}
+#ninvasive.AM.ss.L <-ninvasive.AM.ss[,-1]
+#ninvasive.ECM.ss.L <-ninvasive.AM.ss[,-1]
+#invasive.AM.ss.L <-invasive.AM.ss[,-1]
+# invasive.ECM.ss
+# tree.species.ss
+
+I.AM.J <- vegdist(invasive.AM.ss, method = "jaccard", binary = TRUE)
+I.AM.pcoa <- cmdscale(I.AM.J, eig = TRUE, k = 3)
+
+explainvar1 <- round(I.AM.pcoa$eig[1] / sum(I.AM.pcoa$eig), 3) * 100
+explainvar2 <- round(I.AM.pcoa$eig[2] / sum(I.AM.pcoa$eig), 3) * 100
+explainvar3 <- round(I.AM.pcoa$eig[3] / sum(I.AM.pcoa$eig), 3) * 100
+sum.eig <- sum(explainvar1, explainvar2, explainvar3)
+
+par(mar = c(5, 5, 1, 2) + 0.1)
+plot(I.AM.pcoa$points[,1], I.AM.pcoa$points[,2], ylim = c(-0.2, 0.7),
+     xlab = paste("PCoA 1 (", explainvar1, "%)", sep = ""),
+     ylab = paste("PCoA 2 (", explainvar2, "%)", sep = ""),
+     pch = 16, cex = 2.0, type = "n", cex.lab = 1.5, cex.axis = 1.2, axes = FALSE)
+
+axis(side = 1, labels = TRUE, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+axis(side = 2, labels = TRUE, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+abline(h = 0, v = 0, lty = 3)
+box(lwd = 2)
+
+points(I.AM.pcoa$points[,1], I.AM.pcoa$points[,2],
+       pch = 19, cex = 1, bg = "gray", col = "azure3")
+
+# text(jitter(I.AM.pcoa$points[,1], amount = 0.02), 
+#      jitter(I.AM.pcoa$points[,2], amount = 0.02), 
+#      labels = row.names(I.AM.pcoa$points), col = "black")
+
+title("Ordination of Invasive AM Species")
+
+```
+
+```{r}
+#constraintd ordiance 
+
+#ninvasive.AM.ss.L <-ninvasive.AM.ss[,-1]
+#ninvasive.ECM.ss.L <-ninvasive.AM.ss[,-1]
+#invasive.AM.ss.L <-invasive.AM.ss[,-1]
+#invasive.ECM.ss <-invasive.ECM.ss[,-1]
+# tree.species.ss
+
+I.ECM.J <- vegdist(invasive.ECM.ss, method = "jaccard", binary = TRUE)
+I.ECM.pcoa <- cmdscale(I.ECM.J, eig = TRUE, k = 3)
+
+explainvar1 <- round(I.ECM.pcoa$eig[1] / sum(I.ECM.pcoa$eig), 3) * 100
+explainvar2 <- round(I.ECM.pcoa$eig[2] / sum(I.ECM.pcoa$eig), 3) * 100
+explainvar3 <- round(I.ECM.pcoa$eig[3] / sum(I.ECM.pcoa$eig), 3) * 100
+sum.eig <- sum(explainvar1, explainvar2, explainvar3)
+
+par(mar = c(5, 5, 1, 2) + 0.1)
+plot(I.ECM.pcoa$points[,1], I.ECM.pcoa$points[,2], ylim = c(-0.2, 0.7),
+     xlab = paste("PCoA 1 (", explainvar1, "%)", sep = ""),
+     ylab = paste("PCoA 2 (", explainvar2, "%)", sep = ""),
+     pch = 16, cex = 2.0, type = "n", cex.lab = 1.5, cex.axis = 1.2, axes = FALSE)
+
+axis(side = 1, labels = TRUE, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+axis(side = 2, labels = TRUE, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+abline(h = 0, v = 0, lty = 3)
+box(lwd = 2)
+
+points(I.ECM.pcoa$points[,1], I.ECM.pcoa$points[,2],
+       pch = 19, cex = 1, bg = "gray", col = "azure3")
+
+# text(jitter(I.ECM.pcoa$points[,1], amount = 0.02), 
+#      jitter(I.ECM.pcoa$points[,2], amount = 0.02), 
+#      labels = row.names(I.ECM.pcoa$points), col = "black")
+
+title("Ordination of Invasive ECM Species")
+```
+
+```{r}
+#SS to use: ninvasive.AM.ss ninvasive.ECM.ss invasive.AM.ss invasive.ECM.ss
+#variable matrix: invasive.ss
+# NI.AM.db <-vegdist(ninvasive.AM.ss, method = "bray", binary =TRUE)
+# I.AM.db <-vegdist(invasive.AM.ss, method = "bray", binary =TRUE)
+# NI.ECM.db <-vegdist(ninvasive.ECM.ss, method = "bray", binary =TRUE)
+# I.ECM.db <-vegdist(invasive.ECM.ss, method = "bray", binary =TRUE)
+# tree.db <-vegdist(tree.species.ss, method = "bray")
+
+invasive.db <-vegdist(invasive.ss, method ="bray", binary = TRUE)
+
+tree.dbra <- dbrda(invasive.db ~ ., as.data.frame(invasive.ss))
+ordiplot(tree.dbra)
+invasive.dbrda.mod0 <- dbrda(invasive.db ~1, as.data.frame(invasive.ss))
+ordiplot(invasive.dbrda.mod0)
+tree.dbra.mod1 <-dbrda(invasive.db ~., as.data.frame(invasive.ss))
+
+#takes a minute
+library(future)
+library(furrr)
+plan(multisession) 
+tree.dbrda <- ordiR2step(invasive.dbrda.mod0, tree.dbra.mod1, perm.max =100)
+
+tree.dbrda$call
+tree.dbrda$anova
+ordiplot(tree.dbrda)
+
+
+permutest(tree.dbrda, permutations = 999)
+envfit(tree.dbrda, invasive.ss, perm = 999)
+
+dbrda.explainvar1 <- round(tree.dbrda$CCA$eig[1] / 
+                    sum(c(tree.dbrda$CCA$eig, tree.dbrda$CA$eig)), 3) * 100
+dbrda.explainvar2 <- round(tree.dbrda$CCA$eig[2] / 
+                    sum(c(tree.dbrda$CCA$eig, tree.dbrda$CA$eig)), 3) * 100
+
+invasive.myco.db <-vegdist(invasive.myco.ss, method ="bray", binary = TRUE)
+
+tree.dbra <- dbrda(invasive.myco.db ~ ., as.data.frame(invasive.myco.ss))
+ordiplot(tree.dbra)
+
+ninvasive.myco.db <-vegdist(ninvasive.myco.ss, method ="bray", binary = TRUE)
+
+ntree.dbra <- dbrda(ninvasive.myco.db ~ ., as.data.frame(ninvasive.myco.ss))
+ordiplot(ntree.dbra)
+  
+```
